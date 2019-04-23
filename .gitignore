@@ -1,0 +1,42 @@
+**/.idea/
+**/*.iml
+**/*.iws
+
+**/.settings/
+**/.buildpath
+**/.classpath
+**/.project
+
+**/nbproject/
+**/nbactions.xml
+**/nb-configuration.xml
+
+**/.flattened-pom.xml
+**/rebel*
+
+**/*.log*
+**/*.lck*
+**/*.lock*
+**/*.cache
+
+**/node_modules/
+
+**/bin/
+**/log/
+**/target/
+**/tmp/
+**/*.pyc
+**/*.pyo
+
+
+# Folder view configuration files
+.DS_Store
+Desktop.ini
+
+# Thumbnail cache files
+._*
+Thumbs.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
