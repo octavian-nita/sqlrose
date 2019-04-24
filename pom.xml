@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>net.appfold</groupId>
+    <artifactId>appfold</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>appfold</relativePath>
+  </parent>
+
+  <artifactId>sqlrose-agg</artifactId>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <revision>1.0.0-SNAPSHOT</revision>
+  </properties>
+
+  <name>sqlrose-agg</name>
+  <description>Aggregator for (many) SQLrose modules</description>
+  <url>https://github.com/octavian-nita/sqlrose</url>
+
+  <modules>
+    <module>sqlrose-bom</module>
+  </modules>
+
+</project>
