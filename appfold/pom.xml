@@ -9,31 +9,12 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>appfold-parent</name>
-  <description>appfold.net Corporate (Parent) POM</description>
-  <organization>
-    <name>appfold.net</name>
-    <url>https://appfold.net/</url>
-  </organization>
-
-  <developers>
-    <developer>
-      <id>octavian-nita</id>
-      <name>Octavian Nita</name>
-      <email>octavian.nita@gmail.com</email>
-      <url>https://github.com/octavian-nita</url>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.resourceDirectory>src/main/resources</project.build.resourceDirectory>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+    <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
   </properties>
 
   <build>
@@ -89,4 +70,32 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <name>appfold-parent</name>
+  <description>appfold.net Corporate (Parent) POM</description>
+
+  <licenses>
+    <license>
+      <comments>Copyright © 2019 - 2025 Octavian Theodor NITA. All rights reserved.</comments>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>appfold.net</name>
+    <url>https://appfold.net/</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>octavian-nita</id>
+      <name>Octavian Nita</name>
+      <email>octavian.nita@gmail.com</email>
+      <url>https://github.com/octavian-nita</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
 </project>
