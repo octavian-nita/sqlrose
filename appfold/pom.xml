@@ -9,6 +9,33 @@
   <version>${revision}</version>
   <packaging>pom</packaging>
 
+  <name>appfold-parent</name>
+  <description>appfold.net Corporate (Parent) POM</description>
+  <organization>
+    <name>appfold.net</name>
+    <url>https://appfold.net/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <comments>Copyright © 2019 - 2025 Octavian Theodor NITA. All rights reserved.</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>octavian-nita</id>
+      <name>Octavian Nita</name>
+      <email>octavian.nita@gmail.com</email>
+      <url>https://github.com/octavian-nita</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
   <properties>
     <revision>1.0.0-SNAPSHOT</revision>
 
@@ -18,7 +45,8 @@
   </properties>
 
   <build>
-    <!-- Lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+
+    <!-- Lock down plugin versions to avoid using Maven defaults -->
     <pluginManagement>
       <plugins>
 
@@ -67,13 +95,16 @@
           <version>3.0.0</version>
         </plugin>
 
-        <!-- Helps define a central version in multi-module projects -->
+        <!-- Helps maintain a central version in multi-module projects -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
           <version>1.1.0</version>
           <configuration>
-            <updatePomFile>true</updatePomFile>
+            <outputDirectory>target</outputDirectory>
+            <pomElements>
+              <pluginManagement />
+            </pomElements>
           </configuration>
           <executions>
             <execution>
@@ -93,65 +124,18 @@
           </executions>
         </plugin>
 
-        <!-- CI/CD friendliness: allow changing the value of the 'revision' property within the file from cli.
-             Usage:
-
-             # Maven, any version (we bind the 'antrun:run' goal to the 'validate' phase)
-             mvn validate -DnewRevision=4.17.0
-
-             # Maven 3.3.1+
-             mvn antrun:run@set-revision -DnewRevision=4.17.0 -->
-        <plugin>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.8</version>
-          <executions>
-            <execution>
-              <id>set-revision</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>run</goal>
-              </goals>
-              <configuration>
-                <target name="set-revision" if="newRevision"
-                        description="Replaces, in pom.xml, the value of the 'revision' property">
-                  <replaceregexp file="${project.basedir}/pom.xml" flags="g"
-                                 match="&lt;revision&gt;[^&lt;]*&lt;/revision&gt;"
-                                 replace="&lt;revision&gt;${newRevision}&lt;/revision&gt;" />
-                  <echo>Project revision set from ${revision} to ${newRevision}.</echo>
-                </target>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+          <configuration>
+            <flattenMode>bom</flattenMode>
+          </configuration>
+      </plugin>
+    </plugins>
   </build>
-
-  <name>appfold-parent</name>
-  <description>appfold.net Corporate (Parent) POM</description>
-
-  <licenses>
-    <license>
-      <comments>Copyright © 2019 - 2025 Octavian Theodor NITA. All rights reserved.</comments>
-    </license>
-  </licenses>
-  <organization>
-    <name>appfold.net</name>
-    <url>https://appfold.net/</url>
-  </organization>
-  <developers>
-    <developer>
-      <id>octavian-nita</id>
-      <name>Octavian Nita</name>
-      <email>octavian.nita@gmail.com</email>
-      <url>https://github.com/octavian-nita</url>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
 
 </project>

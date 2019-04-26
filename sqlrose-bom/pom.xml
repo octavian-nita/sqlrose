@@ -16,6 +16,7 @@
 
   <name>sqlrose-bom</name>
   <description>"Bill of materials" (BOM) for (many) SQLrose modules</description>
+  <url>https://github.com/octavian-nita/sqlrose</url>
 
   <scm>
     <connection>scm:git:https://github.com/octavian-nita/sqlrose.git</connection>

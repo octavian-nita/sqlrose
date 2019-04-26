@@ -12,6 +12,7 @@
 **/nb-configuration.xml
 
 **/.flattened-pom.xml
+**/*[Bb]ackup
 **/rebel*
 
 **/*.log*

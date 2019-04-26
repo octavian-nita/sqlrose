@@ -11,17 +11,17 @@
     <relativePath>appfold</relativePath>
   </parent>
 
-  <artifactId>sqlrose-agg</artifactId>
-  <version>${revision}</version>
+  <artifactId>sqlrose</artifactId>
+  <version>aggregate</version>
   <packaging>pom</packaging>
-
-  <properties>
-    <revision>1.0.0-SNAPSHOT</revision>
-  </properties>
 
   <name>sqlrose-agg</name>
   <description>Aggregator for (many) SQLrose modules</description>
   <url>https://github.com/octavian-nita/sqlrose</url>
+
+  <properties>
+    <revision>1.0.0-SNAPSHOT</revision>
+  </properties>
 
   <modules>
     <module>sqlrose-bom</module>
