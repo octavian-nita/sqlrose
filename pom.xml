@@ -12,12 +12,23 @@
   </parent>
 
   <artifactId>sqlrose</artifactId>
-  <version>aggregate</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
-  <name>sqlrose-agg</name>
-  <description>Aggregator for (many) SQLrose modules</description>
+  <name>sqlrose-parent</name>
+  <description>Aggregator AND parent POM for (many) SQLrose modules</description>
   <url>https://github.com/octavian-nita/sqlrose</url>
+
+  <issueManagement>
+    <url>https://github.com/octavian-nita/sqlrose/issues</url>
+    <system>sqlrose Issues on GitHub</system>
+  </issueManagement>
+
+  <scm>
+    <url>https://github.com/octavian-nita/sqlrose</url>
+    <connection>scm:git:https://github.com/octavian-nita/sqlrose.git</connection>
+    <developerConnection>scm:git:https://github.com/octavian-nita/sqlrose.git</developerConnection>
+  </scm>
 
   <properties>
     <revision>1.0.0-SNAPSHOT</revision>
@@ -26,5 +37,17 @@
   <modules>
     <module>sqlrose-bom</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+          <configuration>
+            <flattenMode>bom</flattenMode>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
