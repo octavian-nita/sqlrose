@@ -37,6 +37,7 @@
   <modules>
     <module>sqlrose-bom</module>
     <module>sqlrose-bom-db</module>
+    <module>sqlrose-logging</module>
   </modules>
 
   <build>
@@ -44,9 +45,13 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-          <configuration>
-            <flattenMode>bom</flattenMode>
-          </configuration>
+        <inherited>false</inherited>
+        <configuration>
+          <flattenMode>bom</flattenMode>
+          <pomElements>
+            <pluginManagement />
+          </pomElements>
+        </configuration>
       </plugin>
     </plugins>
   </build>

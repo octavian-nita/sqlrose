@@ -77,9 +77,9 @@
         <version>${slf4j.version}</version>
       </dependency>
       <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>${logback.version}</version>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-to-slf4j</artifactId>
+        <version>2.11.2</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
@@ -89,5 +89,20 @@
 
     </dependencies>
   </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <flattenMode>bom</flattenMode>
+          <pomElements>
+            <pluginManagement />
+          </pomElements>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

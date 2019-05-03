@@ -46,7 +46,6 @@
   </properties>
 
   <build>
-
     <!-- Lock down plugin versions to avoid using Maven defaults -->
     <pluginManagement>
       <plugins>
@@ -107,9 +106,6 @@
           <version>1.1.0</version>
           <configuration>
             <outputDirectory>target</outputDirectory>
-            <pomElements>
-              <pluginManagement />
-            </pomElements>
           </configuration>
           <executions>
             <execution>
@@ -136,9 +132,13 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-          <configuration>
-            <flattenMode>bom</flattenMode>
-          </configuration>
+        <inherited>false</inherited>
+        <configuration>
+          <flattenMode>bom</flattenMode>
+          <pomElements>
+            <pluginManagement />
+          </pomElements>
+        </configuration>
       </plugin>
     </plugins>
   </build>
