@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <property name="appId" value="sqlrose"/>
+
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
+  <!-- WHERE to log... -->
+  <!-- Encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder by default. -->
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yy/MM/dd HH:mm:ss.SSS} %-5level %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="LOGOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <pattern>%d{yy/MM/dd HH:mm:ss.SSS} %-5level [%thread] %logger{1} [%file:%line] %msg%n</pattern>
+    </encoder>
+
+    <file>${appId}.log</file>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>${appId}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>60</maxHistory>
+      <totalSizeCap>20GB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <!-- WHAT to log... -->
+
+  <!-- Consider implementing a mechanism to specify the log level at runtime. -->
+  <root level="debug">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="LOGOUT"/>
+  </root>
+
+</configuration>

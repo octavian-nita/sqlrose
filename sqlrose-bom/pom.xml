@@ -95,6 +95,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
+        <inherited>false</inherited>
         <configuration>
           <flattenMode>bom</flattenMode>
           <pomElements>

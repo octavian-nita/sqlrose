@@ -28,6 +28,7 @@
     <url>https://github.com/octavian-nita/sqlrose</url>
     <connection>scm:git:https://github.com/octavian-nita/sqlrose.git</connection>
     <developerConnection>scm:git:https://github.com/octavian-nita/sqlrose.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
