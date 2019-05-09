@@ -136,11 +136,21 @@
         <configuration>
           <flattenMode>bom</flattenMode>
           <pomElements>
-            <pluginManagement />
+            <pluginManagement/>
           </pomElements>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>jcenter</id>
+      <url>http://jcenter.bintray.com</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>

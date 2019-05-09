@@ -46,6 +46,10 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
     </dependency>
+    <dependency>
+      <groupId>me.nallar.whocalled</groupId>
+      <artifactId>WhoCalled</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

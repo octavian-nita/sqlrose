@@ -64,6 +64,11 @@
         <artifactId>commons-lang3</artifactId>
         <version>3.9</version>
       </dependency>
+      <dependency>
+        <groupId>me.nallar.whocalled</groupId>
+        <artifactId>WhoCalled</artifactId>
+        <version>1.1</version>
+      </dependency>
 
       <!-- Logging should be taken seriously. -->
       <dependency>
