@@ -34,8 +34,8 @@
   </appender>
 
   <!-- WHAT to log... -->
+  <!-- Consider implementing a mechanism to specify the log level at runtime... -->
 
-  <!-- Consider implementing a mechanism to specify the log level at runtime. -->
   <root level="debug">
     <appender-ref ref="STDOUT"/>
     <appender-ref ref="LOGOUT"/>
