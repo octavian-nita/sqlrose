@@ -11,7 +11,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Entry point for logging-related configuration and (<a href="https://www.slf4j.org/">SLF4J</a>-based) utilities.
  *
  * @author Octavian Nita (https://github.com/octavian-nita/)
- * @version 2.0, Nov 8, 2017
+ * @version 3.0, May 13, 2019
  */
 public class Log {
 

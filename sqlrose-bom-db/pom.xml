@@ -52,7 +52,7 @@
         <configuration>
           <flattenMode>bom</flattenMode>
           <pomElements>
-            <pluginManagement />
+            <pluginManagement/>
           </pomElements>
         </configuration>
       </plugin>

@@ -39,6 +39,7 @@
     <module>sqlrose-bom</module>
     <module>sqlrose-bom-db</module>
     <module>sqlrose-logging</module>
+    <module>sqlrose-i18n</module>
   </modules>
 
   <build>
@@ -50,7 +51,7 @@
         <configuration>
           <flattenMode>bom</flattenMode>
           <pomElements>
-            <pluginManagement />
+            <pluginManagement/>
           </pomElements>
         </configuration>
       </plugin>
