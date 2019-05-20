@@ -39,6 +39,7 @@
     <module>sqlrose-bom</module>
     <module>sqlrose-bom-db</module>
     <module>sqlrose-logging</module>
+    <module>sqlrose-cache</module>
     <module>sqlrose-i18n</module>
   </modules>
 
