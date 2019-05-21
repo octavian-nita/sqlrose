@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Entry point/façade for a basic internationalization subsystem.
  *
- * @author Octavian Nita (https://github.com/octavian-nita/)
+ * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 2.0, May 17, 2019
  */
 public class I18n {
