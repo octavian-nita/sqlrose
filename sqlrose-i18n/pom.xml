@@ -35,6 +35,11 @@
       <artifactId>sqlrose-logging</artifactId>
       <version>${revision}</version>
     </dependency>
+    <dependency>
+      <groupId>net.appfold</groupId>
+      <artifactId>sqlrose-cache</artifactId>
+      <version>${revision}</version>
+    </dependency>
   </dependencies>
 
   <build>

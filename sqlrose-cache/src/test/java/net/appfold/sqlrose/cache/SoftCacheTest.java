@@ -35,7 +35,7 @@ class SoftCacheTest {
     @Test
     public void newCache_BoundedAtN_SizeIs0AndMaxSizeIsN() {
         assertEquals(0, cacheUnderTest.size(), "Cache should store 0 initial entries (size)");
-        assertEquals(setUpBound, cacheUnderTest.maxSize(), "Cache should have 2 available entries (max size)");
+        assertEquals(setUpBound, cacheUnderTest.getMaxSize(), "Cache should have 2 available entries (max size)");
     }
 
     @Test
