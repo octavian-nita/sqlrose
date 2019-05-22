@@ -78,6 +78,26 @@ public class ConcurrentSoftCache<K, V> extends SoftCache<K, V> {
     }
 
     @Override
+    public int getMaxSize() {
+        rwLock.readLock().lock();
+        try {
+            return super.getMaxSize();
+        } finally {
+            rwLock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public void setMaxSize(int maxSize) {
+        rwLock.writeLock().lock();
+        try {
+            super.setMaxSize(maxSize);
+        } finally {
+            rwLock.writeLock().unlock();
+        }
+    }
+
+    @Override
     public boolean isFull() {
         rwLock.readLock().lock();
         try {

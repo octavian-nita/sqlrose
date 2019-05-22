@@ -1,9 +1,10 @@
 package net.appfold.sqlrose.i18n;
 
-import org.slf4j.LoggerFactory;
-
 import java.text.MessageFormat;
 import java.util.*;
+
+import static java.util.Optional.of;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Entry point/façade for a basic internationalization subsystem.
@@ -13,19 +14,23 @@ import java.util.*;
  */
 public class I18n {
 
+    protected String bundlePrefix;
+
     protected Locale currentLocale;
 
-    protected String bundleBaseName;
+    protected boolean cacheFormats = true;
 
-    protected String bundlePrefix;
+    protected final Set<String> bundleBaseNames = new LinkedHashSet<>(4);
 
     public I18n() { this(null, null); }
 
-    public I18n(String bundlePrefix) {
-        this(bundlePrefix, null);
-    }
+    public I18n(String bundlePrefix) { this(null, bundlePrefix); }
 
-    public I18n(String bundlePrefix, Locale currentLocale) {
+    public I18n(Locale currentLocale) { this(currentLocale, null); }
+
+    public I18n(Locale currentLocale, String bundlePrefix) {
+        this.currentLocale = currentLocale == null ? Locale.getDefault() : currentLocale;
+
         bundlePrefix =
             bundlePrefix == null ? System.getProperty("sqlrose.l10n.prefix", "locales/").trim() : bundlePrefix.trim();
         if (bundlePrefix.length() > 0 && !bundlePrefix.endsWith("/")) {
@@ -33,7 +38,6 @@ public class I18n {
         }
 
         this.bundlePrefix = bundlePrefix;
-        this.currentLocale = currentLocale == null ? Locale.getDefault() : currentLocale;
     }
 
     public Locale getCurrentLocale() { return currentLocale; }
@@ -43,30 +47,49 @@ public class I18n {
         return this;
     }
 
-    public String t(String key, Object... args) { return t(key, null, args); }
+    public String getBundlePrefix() { return bundlePrefix; }
 
-    public String t(String key, Locale locale, Object... args) {
+    public I18n setBundlePrefix(String bundlePrefix) {
+        bundlePrefix =
+            bundlePrefix == null ? System.getProperty("sqlrose.l10n.prefix", "locales/").trim() : bundlePrefix.trim();
+        if (bundlePrefix.length() > 0 && !bundlePrefix.endsWith("/")) {
+            bundlePrefix += "/";
+        }
+
+        this.bundlePrefix = bundlePrefix;
+        return this;
+    }
+
+    public String t(String key, Object... args) { return t(null, key, args); }
+
+    public String t(Locale locale, String key, Object... args) {
         if (key == null) {
-            return "!?";
+            return "";
         }
 
         if (locale == null) {
             locale = getCurrentLocale();
             if (locale == null) {
-                return "!" + key;
+                locale = Locale.getDefault();
             }
         }
 
         try {
-            final ResourceBundle bundle = ResourceBundle.getBundle(bundlePrefix + "Messages", locale);
 
+            final String message = ResourceBundle.getBundle(bundlePrefix + "Messages", locale).getString(key);
             return args == null || args.length == 0
-                   ? bundle.getString(key)
-                   : new MessageFormat(bundle.getString(key), locale).format(args);
+                   ? message
+                   : messageFormat(message, locale, key).map(fmt -> fmt.format(args)).orElse(message);
 
         } catch (ClassCastException | MissingResourceException ex) {
-            LoggerFactory.getLogger(getClass()).warn("Cannot translate text resource for key " + key, ex);
-            return "!" + key;
+
+            getLogger(getClass()).warn("Cannot translate text resource for key " + key, ex);
+            return key;
+
         }
+    }
+
+    protected Optional<MessageFormat> messageFormat(String message, Locale locale, String key) {
+        return of(new MessageFormat(message, locale));
     }
 }

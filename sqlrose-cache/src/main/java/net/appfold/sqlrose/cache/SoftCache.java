@@ -5,10 +5,10 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * A <em>poor man's</em> <strong>bounded</strong> cache with a <em>minimal interface</em> that uses a
- * {@link SoftReference}-wrapped {@link Map} instance as the backing structure to hold the cached data. Whether
- * {@code null} keys are allowed or not as well as other characteristics of this structure can be customized by
- * overriding {@link #createBoundedCache()}.
+ * A <em>poor man's</em> <strong>bounded</strong> cache with a <em>minimal interface</em> that uses a {@link Map}
+ * instance wrapped in a {@link SoftReference} as the backing structure to hold cached data. Whether {@code null}
+ * keys are allowed or not as well as other characteristics of this structure can be customized by overriding
+ * {@link #createBoundedCache()}.
  * <p/>
  * By default, a {@link LinkedHashMap} instance is used as the backing structure, which allows {@code null} keys and
  * implements a basic <a href="https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU">LRU replacement policy</a>.
@@ -27,7 +27,9 @@ public class SoftCache<K, V> {
 
     protected transient SoftReference<Map<K, V>> cacheRef;
 
-    /** Equivalent to calling <code>new SoftCache({@link #DEFAULT_MAX_SIZE})</code>. */
+    /**
+     * Equivalent to calling <code>new SoftCache({@link #DEFAULT_MAX_SIZE})</code>.
+     */
     public SoftCache() { this(DEFAULT_MAX_SIZE); }
 
     public SoftCache(int maxSize) {
@@ -86,10 +88,12 @@ public class SoftCache<K, V> {
      * @return a new instance of the backing {@link Map structure} to hold data
      */
     protected Map<K, V> createBoundedCache() {
-        return new LinkedHashMap<K, V>(16 /* => not too many slots, initially */, 0.75f, true /* => LRU */) {
+        return new LinkedHashMap<K, V>(16 /* => not too many slots, initially */, .75f, true /* => LRU */) {
 
             @Override
-            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) { return size() > maxSize; /* => LRU */}
+            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+                return size() > getMaxSize(); // => LRU
+            }
         };
     }
 }
