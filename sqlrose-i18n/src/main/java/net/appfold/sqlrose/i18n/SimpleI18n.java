@@ -5,15 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static java.lang.System.getProperty;
-import static java.util.Collections.*;
-import static java.util.Optional.*;
+import static java.util.Collections.addAll;
+import static java.util.ResourceBundle.getBundle;
+import static net.appfold.sqlrose.cache.MemoizedBiFn.memoize;
 
 /**
  * A fairly <em>simple</em> implementation of {@link I18n} using the <em>
- * <a href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously recurring template pattern</a>
- * </em>.
+ * <a href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously recurring template
+ * pattern</a></em>. Very similar in behaviour to <a href="https://spring.io/projects/spring-framework">Spring
+ * Framework's</a> <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html">
+ * ResourceBundleMessageSource</a></code>, this class relies on the underlying JDK's {@link ResourceBundle}
+ * implementation in combination with the JDK's standard message parsing provided by {@link MessageFormat},
+ * caches by default the generated message formats for each message and allows customization (through extension)
+ * of how both the resource bundles and the message formats are created. It also suffers from the same shortcomings.
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 1.0, May 23, 2019
@@ -33,9 +40,18 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
 
     protected final Set<String> bundleBaseNames = new LinkedHashSet<>(4);
 
+    /** Can be {@code null} */
     protected String bundlePrefix;
 
+    /** Can be {@code null} */
     protected Locale locale;
+
+    /** Can be {@code null} */
+    protected BiFunction<String, Locale, MessageFormat> messageFormatSupplier = memoize(MessageFormat::new);
+
+    /** Can be {@code null} */
+    protected BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier =
+        (baseName, locale) -> locale == null ? getBundle(baseName) : getBundle(baseName, locale);
 
     @Override
     public Locale getLocale() { return locale; }
@@ -44,8 +60,6 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
         this.locale = locale == null ? Locale.getDefault() : locale;
         return self();
     }
-
-    public String getBundlePrefix() { return bundlePrefix; }
 
     public SELF setBundlePrefix(String bundlePrefix) {
         bundlePrefix =
@@ -57,9 +71,6 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
         this.bundlePrefix = bundlePrefix;
         return self();
     }
-
-    @NonNull
-    public Set<String> getBundleBaseNames() { return unmodifiableSet(bundleBaseNames); }
 
     public SELF setBundleBaseNames(Collection<String> bundleBaseNames) {
         this.bundleBaseNames.clear();
@@ -76,10 +87,21 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
         return self();
     }
 
+    public SELF setMessageFormatSupplier(BiFunction<String, Locale, MessageFormat> messageFormatSupplier) {
+        this.messageFormatSupplier = messageFormatSupplier;
+        return self();
+    }
+
+    public SELF setResourceBundleSupplier(BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier) {
+        this.resourceBundleSupplier = resourceBundleSupplier;
+        return self();
+    }
+
+    @NonNull
     @Override
     public String t(Locale locale, String key, Object... args) {
         if (key == null) {
-            log.warn("Cannot translate text resource for a null key");
+            log.warn("Cannot translate resource for a null key");
             return "";
         }
 
@@ -90,49 +112,46 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
             }
         }
 
-        try {
-
-            final String message = message(key, locale).orElse(key);
-            return args == null || args.length == 0
-                   ? message
-                   : messageFormat(message, locale, key).map(fmt -> fmt.format(args)).orElse(message);
-
-        } catch (ClassCastException | MissingResourceException ex) {
-
-            log.warn("Cannot translate text resource for key " + key, ex);
-            return key;
-
+        final String message = message(key, locale);
+        if (args == null || args.length == 0 || messageFormatSupplier == null) {
+            return message;
         }
+
+        final MessageFormat format = messageFormatSupplier.apply(key, locale);
+        return format == null ? message : format.format(args);
     }
 
-    protected Optional<String> message(String key, Locale locale) {
+    @NonNull
+    protected String message(String key, Locale locale) {
         if (key == null) {
-            return empty();
+            log.warn("Cannot translate resource for a null key");
+            return "";
         }
 
-        for (String bundleBaseName : bundleBaseNames) {
-            if (bundleBaseName == null) {
+        if (resourceBundleSupplier == null) {
+            return key;
+        }
+
+        for (String baseName : bundleBaseNames) {
+            if (baseName == null) {
                 continue;
             }
 
-            bundleBaseName = bundlePrefix + bundleBaseName;
+            if (bundlePrefix != null) {
+                baseName = bundlePrefix + baseName;
+            }
+
             try {
-                final ResourceBundle bundle = locale == null
-                                              ? ResourceBundle.getBundle(bundleBaseName)
-                                              : ResourceBundle.getBundle(bundleBaseName, locale);
-                if (bundle != null) {
-                    String message = bundle.getString(key);
+                final ResourceBundle resourceBundle = resourceBundleSupplier.apply(baseName, locale);
+                if (resourceBundle != null) {
+                    return resourceBundle.getString(key);
                 }
             } catch (MissingResourceException ex) {
-                continue;
+                // continue to the next bundle (base name)
             }
         }
 
-        return empty();
-    }
-
-    protected Optional<MessageFormat> messageFormat(String message, Locale locale, String key) {
-        return of(new MessageFormat(message, locale));
+        return key;
     }
 
     /**
