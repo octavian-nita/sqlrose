@@ -14,10 +14,16 @@ import java.util.Locale;
  */
 public interface I18n {
 
+    /**
+     * @return the {@link Locale locale} currently used by {@code this} entry point
+     */
     default Locale getLocale() {
         return getDefaultLocale();
     }
 
+    /**
+     * @return the {@link Locale locale} used by {@code this} entry point if no other locale has been set
+     */
     default Locale getDefaultLocale() {
         return Locale.getDefault();
     }
