@@ -24,7 +24,7 @@ import static net.appfold.sqlrose.cache.MemoizedBiFn.memoize;
  * caches by default the generated message formats for each message and can be configured concerning how both the
  * {@link #setResourceBundleSupplier(BiFunction) resource bundles} and the {@link #setMessageFormatSupplier(BiFunction)
  * message formats} are created. It also suffers from the same shortcomings as {@code ResourceBundleMessageSource} so a
- * {@code ReloadableResourceBundleMessageSource} might be a better choice if the Spring framework is heavily used.
+ * {@code ReloadableResourceBundleMessageSource} might be a better choice if the client application is based on Spring.
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 1.0, May 23, 2019
