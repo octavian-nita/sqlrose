@@ -13,14 +13,18 @@ import static java.util.ResourceBundle.getBundle;
 import static net.appfold.sqlrose.cache.MemoizedBiFn.memoize;
 
 /**
- * A fairly <em>simple</em> implementation of {@link I18n} using the <em>
- * <a href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously recurring template
- * pattern</a></em>. Very similar in behaviour to <a href="https://spring.io/projects/spring-framework">Spring
- * Framework's</a> <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html">
+ * A fairly <em>simple</em> implementation of {@link I18n} using the <em><a
+ * href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously recurring template pattern
+ * </a></em>.
+ * <p/>
+ * Very similar in behaviour to <a href="https://spring.io/projects/spring-framework">Spring Framework's</a>
+ * <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html">
  * ResourceBundleMessageSource</a></code>, this class relies on the underlying JDK's {@link ResourceBundle}
  * implementation in combination with the JDK's standard message parsing provided by {@link MessageFormat},
- * caches by default the generated message formats for each message and allows customization (through extension)
- * of how both the resource bundles and the message formats are created. It also suffers from the same shortcomings.
+ * caches by default the generated message formats for each message and can be configured concerning how both the
+ * {@link #setResourceBundleSupplier(BiFunction) resource bundles} and the {@link #setMessageFormatSupplier(BiFunction)
+ * message formats} are created. It also suffers from the same shortcomings as {@code ResourceBundleMessageSource} so a
+ * {@code ReloadableResourceBundleMessageSource} might be a better choice if the Spring framework is heavily used.
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 1.0, May 23, 2019
@@ -53,22 +57,15 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
     protected BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier =
         (baseName, locale) -> locale == null ? getBundle(baseName) : getBundle(baseName, locale);
 
-    @Override
-    public Locale getLocale() { return locale; }
-
-    public SELF setLocale(Locale locale) {
-        this.locale = locale == null ? Locale.getDefault() : locale;
-        return self();
+    public SimpleI18n(String... bundleBaseNames) {
+        setBundlePrefix(getProperty(L10N_BASEDIR_KEY, L10N_BASEDIR_DEF).trim());
+        addBundleBaseNames(bundleBaseNames);
     }
 
-    public SELF setBundlePrefix(String bundlePrefix) {
-        bundlePrefix =
-            bundlePrefix == null ? getProperty(L10N_BASEDIR_KEY, L10N_BASEDIR_DEF).trim() : bundlePrefix.trim();
-        if (bundlePrefix.length() > 0 && !bundlePrefix.endsWith("/")) {
-            bundlePrefix += "/";
+    public SELF addBundleBaseNames(String... bundleBaseNames) {
+        if (bundleBaseNames != null && bundleBaseNames.length > 0) {
+            addAll(this.bundleBaseNames, bundleBaseNames);
         }
-
-        this.bundlePrefix = bundlePrefix;
         return self();
     }
 
@@ -80,10 +77,15 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
         return self();
     }
 
-    public SELF addBundleBaseNames(String... bundleBaseNames) {
-        if (bundleBaseNames != null && bundleBaseNames.length > 0) {
-            addAll(this.bundleBaseNames, bundleBaseNames);
+    public SELF setBundlePrefix(String bundlePrefix) {
+        if (bundlePrefix != null) {
+            bundlePrefix = bundlePrefix.trim();
+            if (bundlePrefix.length() > 0 && !bundlePrefix.endsWith("/")) {
+                bundlePrefix += "/";
+            }
         }
+
+        this.bundlePrefix = bundlePrefix;
         return self();
     }
 
@@ -97,11 +99,19 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
         return self();
     }
 
+    public SELF setLocale(Locale locale) {
+        this.locale = locale == null ? Locale.getDefault() : locale;
+        return self();
+    }
+
+    @Override
+    public Locale getLocale() { return locale; }
+
     @NonNull
     @Override
     public String t(Locale locale, String key, Object... args) {
         if (key == null) {
-            log.warn("Cannot translate resource for a null key");
+            log.debug("Cannot translate resource for a null key");
             return "";
         }
 
@@ -122,12 +132,7 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
     }
 
     @NonNull
-    protected String message(String key, Locale locale) {
-        if (key == null) {
-            log.warn("Cannot translate resource for a null key");
-            return "";
-        }
-
+    protected String message(@NonNull String key, Locale locale) {
         if (resourceBundleSupplier == null) {
             return key;
         }
