@@ -41,6 +41,7 @@
     <module>sqlrose-logging</module>
     <module>sqlrose-cache</module>
     <module>sqlrose-i18n</module>
+    <module>sqlrose-core</module>
   </modules>
 
   <build>
