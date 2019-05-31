@@ -1,7 +1,9 @@
 package net.appfold.sqlrose.logging;
 
+import ch.qos.logback.classic.*;
 import me.nallar.whocalled.WhoCalled;
 import org.slf4j.Logger;
+import org.slf4j.*;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
@@ -40,7 +42,31 @@ public class Log {
         SLF4JBridgeHandler.removeHandlersForRootLogger(); // avoid having everything logged twice
         SLF4JBridgeHandler.install();
 
-        java.util.logging.Logger.getGlobal().setLevel(java.util.logging.Level.FINE /* -> DEBUG in SLF4J */);
+        java.util.logging.Logger.getGlobal().setLevel(java.util.logging.Level.FINEST);
+    }
+
+    public static void setLevel(String level) { setLevel((String) null, level); }
+
+    public static void setLevel(Logger logger, String level) {
+        setLevel(logger == null ? null : logger.getName(), level);
+    }
+
+    public static void setLevel(Class<?> clazz, String level) {
+        setLevel(clazz == null ? null : clazz.getName(), level);
+    }
+
+    /**
+     * Setting the log level programmatically requires accessing the actual SLF4J implementation used.
+     *
+     * @param level the SLF4J implementation-specific name of the desired level
+     */
+    public static void setLevel(String loggerName, String level) {
+        final ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
+        if (loggerFactory instanceof LoggerContext) { // Logback
+            final LoggerContext loggerContext = (LoggerContext) loggerFactory;
+            loggerContext.getLogger(loggerName == null ? ROOT_LOGGER_NAME : loggerName)
+                         .setLevel(Level.toLevel(level, Level.INFO));
+        }
     }
 
     public static Logger log() { return logFor(null); }
