@@ -2,6 +2,7 @@ package net.appfold.sqlrose.core.exception;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Getter
 @EqualsAndHashCode
-public final class ErrorCode implements Comparable<ErrorCode> {
+public final class ErrorCode implements Comparable<ErrorCode>, Serializable {
 
     private static final Map<String, ErrorCode> valueCache = new ConcurrentHashMap<>();
 
