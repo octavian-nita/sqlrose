@@ -127,7 +127,7 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
             return message;
         }
 
-        final MessageFormat format = messageFormatSupplier.apply(key, locale);
+        final MessageFormat format = messageFormatSupplier.apply(message, locale);
         return format == null ? message : format.format(args);
     }
 

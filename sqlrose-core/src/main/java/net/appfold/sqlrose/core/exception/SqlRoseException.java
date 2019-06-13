@@ -1,5 +1,7 @@
 package net.appfold.sqlrose.core.exception;
 
+import java.time.Instant;
+
 import static java.util.Arrays.copyOf;
 
 /**
@@ -16,6 +18,8 @@ import static java.util.Arrays.copyOf;
  * @version 1.0, Jun 12, 2019
  */
 public class SqlRoseException extends RuntimeException {
+
+    private final Instant timestamp = Instant.now();
 
     private final ErrorCode errorCode;
 
@@ -41,18 +45,20 @@ public class SqlRoseException extends RuntimeException {
 
     public SqlRoseException(ErrorCode errorCode, Object... details) {
         this.errorCode = errorCode;
-        this.details = details == null ? null : copyOf(details, details.length);
+        this.details = details == null || details.length == 0 ? null : copyOf(details, details.length);
     }
 
     public SqlRoseException(Throwable cause, ErrorCode errorCode, Object... details) {
         super(cause);
         this.errorCode = errorCode;
-        this.details = details == null ? null : copyOf(details, details.length);
+        this.details = details == null || details.length == 0 ? null : copyOf(details, details.length);
     }
 
-    public ErrorCode getErrorCode() { return errorCode; }
+    public final Instant getTimestamp() { return timestamp; }
 
-    public String getCode() { return errorCode == null ? null : errorCode.value(); }
+    public final ErrorCode getErrorCode() { return errorCode; }
+
+    public final String getCode() { return errorCode == null ? null : errorCode.value(); }
 
     public Object[] getDetails() { return details == null ? null : copyOf(details, details.length); }
 }

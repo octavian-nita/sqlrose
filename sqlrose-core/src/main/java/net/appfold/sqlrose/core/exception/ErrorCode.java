@@ -14,6 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @EqualsAndHashCode
 public final class ErrorCode implements Comparable<ErrorCode>, Serializable {
 
+    public static final ErrorCode E_GENERIC = new ErrorCode("E_GENERIC");
+
+    public static final ErrorCode E_COMPOSITE = new ErrorCode("E_COMPOSITE");
+
     private static final Map<String, ErrorCode> valueCache = new ConcurrentHashMap<>();
 
     public static ErrorCode errorCode(CharSequence value) {
