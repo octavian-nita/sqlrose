@@ -109,17 +109,15 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
 
     @NonNull
     @Override
-    public String t(Locale locale, String key, Object... args) {
+    public String t(String key, Object... args) {
         if (key == null) {
             log.debug("Cannot translate resource for a null key");
             return "";
         }
 
+        Locale locale = getLocale();
         if (locale == null) {
-            locale = getLocale();
-            if (locale == null) {
-                locale = getDefaultLocale();
-            }
+            locale = getDefaultLocale();
         }
 
         final String message = message(key, locale);

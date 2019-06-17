@@ -2,26 +2,32 @@ package net.appfold.sqlrose.i18n;
 
 import lombok.NonNull;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
- * Entry point/façade for a basic internationalization subsystem. Employs shorter names for commonly used routines
- * e.g., {@link #t(String, Object...) t} for <em>translating</em> messages, <em>l</em> for <em>localizing</em> values
- * like dates and numbers, etc.
- * <p/>
- * The purpose here is to <em>outline</em> a set of essential primitives used to internationalize the application,
+ * Entry point/façade for a basic internationalization subsystem which:
+ * <ul>
+ * <li><em>groups</em>s several parameters which play a part in consistently internationalizing the application, e.g.,
+ * {@link #getLocale() locale}, {@link java.time.format.DateTimeFormatter date/time formatter}, {@link java.time.ZoneId
+ * zone}, etc.</li>
+ * <li><em>outline</em>s a set of essential primitives which can be used to internationalize the application,
  * regardless of the actual implementation mechanism or framework employed ({@link java.util.ResourceBundle}-based, <a
- * href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ReloadableResourceBundleMessageSource.html">
- * Spring</a>-based, etc.).
+ * href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ReloadableResourceBundleMessageSource.html">Spring</a>-based,
+ * etc.)</li>
+ * <li>employs shorter names for commonly used routines e.g., {@link #t(String, Object...) t} for
+ * <em>translating</em>messages, <em>l</em> for <em>localizing</em> values like dates and numbers, etc.</li>
+ * </ul>
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 1.0, May 23, 2019
+ * @see <a href="https://stackoverflow.com/a/10571144/272939">This</a> Stack Overflow answer
  */
 public interface I18n {
 
     /**
-     * @return the {@link Locale locale} currently used by {@code this} entry point; (appropriately) defaults to
-     *     {@link #getDefaultLocale()}
+     * @return the {@link Locale locale} currently used by {@code this} entry point; defaults to {@link #getDefaultLocale()}
      */
     default Locale getLocale() {
         return getDefaultLocale();
@@ -35,19 +41,28 @@ public interface I18n {
         return Locale.getDefault();
     }
 
-    /**
-     * Defaults to returning {@code t(getLocale(), key, args)}.
-     */
-    @NonNull
-    default String t(String key, Object... args) {
-        return t(getLocale(), key, args);
+    default DateTimeFormatter getDateTimeFormatter() {
+        return getDefaultDateTimeFormatter();
+    }
+
+    default DateTimeFormatter getDefaultDateTimeFormatter() {
+        return DateTimeFormatter.RFC_1123_DATE_TIME;
+    }
+
+    default ZoneId getZoneId() {
+        return getDefaultZoneId();
+    }
+
+    default ZoneId getDefaultZoneId() {
+        return ZoneId.systemDefault();
     }
 
     /**
-     * If no message can be found/resolved for the given {@code key} and {@code locale}, depending on the actual
-     * implementation, this method could return the key itself (if non-{@code null}) or the empty string, etc.
+     * If no message can be found/resolved for the given {@code key} and {@code #getLocale() currently used locale},
+     * depending on the actual implementation, this method could return the key itself (if non-{@code null}), an empty
+     * string, etc.
      *
      * @return never {@code null}
      */
-    @NonNull String t(Locale locale, String key, Object... args);
+    @NonNull String t(String key, Object... args);
 }
