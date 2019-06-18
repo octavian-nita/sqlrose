@@ -56,7 +56,7 @@ public final class CompositeException extends SqlRoseException implements Iterab
      * @return an array containing exactly one, non-{@code null} {@link Integer}, the value returned by {@link #size()}
      */
     @Override
-    public Object[] getDetails() {
+    public final Object[] getDetails() {
         return new Integer[]{size()};
     }
 }

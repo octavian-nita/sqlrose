@@ -36,6 +36,9 @@ public final class ErrorCode implements Comparable<ErrorCode>, Serializable {
         this.value = value;
     }
 
+    /**
+     * Naturally, lexicographically ordered by {@link #getValue() value}.
+     */
     @Override
     public int compareTo(ErrorCode errorCode) {
         return value.compareTo(errorCode.value);
