@@ -1,5 +1,7 @@
 package net.appfold.sqlrose.core.exception;
 
+import java.util.function.Consumer;
+
 /**
  * A generic strategy for handling errors, similar in shape (and intent) to Spring's <a
  * href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/ErrorHandler.html">ErrorHandler</a>.
@@ -9,7 +11,12 @@ package net.appfold.sqlrose.core.exception;
  * @version 1.0, Jun 19, 2019
  */
 @FunctionalInterface
-public interface ExceptionHandler<T extends Throwable> {
+public interface ExceptionHandler<T extends Throwable> extends Consumer<T> {
 
     void handle(T exception);
+
+    @Override
+    default void accept(T exception) {
+        handle(exception);
+    }
 }

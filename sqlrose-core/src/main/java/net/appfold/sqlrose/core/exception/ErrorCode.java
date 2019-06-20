@@ -18,6 +18,8 @@ public final class ErrorCode implements Comparable<ErrorCode>, Serializable {
 
     public static final ErrorCode E_COMPOSITE = new ErrorCode("E_COMPOSITE");
 
+    public static final ErrorCode E_NO_DETAILS = new ErrorCode("E_NO_DETAILS");
+
     private static final Map<String, ErrorCode> valueCache = new ConcurrentHashMap<>();
 
     public static ErrorCode errorCode(CharSequence value) {

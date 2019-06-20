@@ -5,6 +5,7 @@ import net.appfold.sqlrose.i18n.I18n;
 import org.slf4j.Logger;
 
 import static java.lang.Thread.currentThread;
+import static net.appfold.sqlrose.core.exception.ErrorCode.E_NO_DETAILS;
 
 /**
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
@@ -36,7 +37,7 @@ public class SimpleExceptionHandler<SELF extends SimpleExceptionHandler<SELF>>
     }
 
     protected void log(Thread thread) {
-        if (thread != null && thread != currentThread()) {
+        if (thread != null && thread != currentThread()) { // log thread info only if handling in another thread...
             if (log.isDebugEnabled()) {
                 final String groupName = thread.getThreadGroup() == null ? null : thread.getThreadGroup().getName();
                 if (groupName == null) {
@@ -51,7 +52,7 @@ public class SimpleExceptionHandler<SELF extends SimpleExceptionHandler<SELF>>
     @Override
     public void handle(Throwable exception) {
         if (exception == null) {
-            log.error(i18n.t("E_NO_DETAILS"));
+            log.error(i18n.t(E_NO_DETAILS.value()));
             return;
         }
 
