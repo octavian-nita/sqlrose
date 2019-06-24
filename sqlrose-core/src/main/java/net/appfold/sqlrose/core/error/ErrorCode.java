@@ -1,4 +1,4 @@
-package net.appfold.sqlrose.core.exception;
+package net.appfold.sqlrose.core.error;
 
 import lombok.*;
 

@@ -1,11 +1,11 @@
-package net.appfold.sqlrose.core.exception;
+package net.appfold.sqlrose.core.error;
 
 import lombok.NonNull;
 import net.appfold.sqlrose.i18n.I18n;
 import org.slf4j.Logger;
 
 import static java.lang.Thread.currentThread;
-import static net.appfold.sqlrose.core.exception.ErrorCode.E_NO_DETAILS;
+import static net.appfold.sqlrose.core.error.ErrorCode.E_NO_DETAILS;
 
 /**
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)

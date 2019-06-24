@@ -1,14 +1,16 @@
-package net.appfold.sqlrose.core.exception;
+package net.appfold.sqlrose.core.error;
 
 import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static net.appfold.sqlrose.core.exception.ErrorCode.E_COMPOSITE;
+import static net.appfold.sqlrose.core.error.ErrorCode.E_COMPOSITE;
 
 /**
- * An exception that is a composite of and can further {@link #add(Throwable...) accumulate} one or more other
- * exceptions. {@code null} arguments are generally ignored.
+ * An {@link SqlRoseException exception} whose purpose is to {@link #add(Throwable...) accumulate} one or more other
+ * exceptions (to be handled at a later point, for example). {@code null} arguments are generally ignored, and only the
+ * {@link #getExceptions() content} of other {@link CompositeException composite exceptions} is accumulated in order to
+ * avoid recursive structures.
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 1.0, Jun 13, 2019
@@ -33,7 +35,7 @@ public final class CompositeException extends SqlRoseException implements Iterab
     public CompositeException add(Iterable<? extends Throwable> exceptions) {
         if (exceptions != null) {
             for (Throwable exception : exceptions) {
-                if (exception != null) {
+                if (exception != null && !exception.equals(this)) {
                     if (exception instanceof CompositeException) {
                         this.exceptions.addAll(((CompositeException) exception).exceptions);
                     } else {
