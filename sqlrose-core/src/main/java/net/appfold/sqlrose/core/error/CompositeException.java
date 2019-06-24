@@ -10,7 +10,8 @@ import static net.appfold.sqlrose.core.error.ErrorCode.E_COMPOSITE;
  * An {@link SqlRoseException exception} whose purpose is to {@link #add(Throwable...) accumulate} one or more other
  * exceptions (to be handled at a later point, for example). {@code null} arguments are generally ignored, and only the
  * {@link #getExceptions() content} of other {@link CompositeException composite exceptions} is accumulated in order to
- * avoid recursive structures.
+ * avoid recursive structures. In other words, a {@link CompositeException} <strong>cannot</strong> contain other
+ * {@link CompositeException}s.
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 1.0, Jun 13, 2019

@@ -1,5 +1,7 @@
 package net.appfold.sqlrose.core.error;
 
+import lombok.NonNull;
+
 import java.time.Instant;
 
 import static java.lang.Thread.currentThread;
@@ -20,6 +22,7 @@ import static java.util.Arrays.copyOf;
  */
 public class SqlRoseException extends RuntimeException {
 
+    @NonNull
     private final Instant timestamp;
 
     private final String threadName;
@@ -72,6 +75,7 @@ public class SqlRoseException extends RuntimeException {
     /**
      * @return the {@link Instant moment} {@code this} exception was created
      */
+    @NonNull
     public final Instant getTimestamp() { return timestamp; }
 
     /**
@@ -85,9 +89,7 @@ public class SqlRoseException extends RuntimeException {
      */
     public final String getThreadGroupName() { return threadGroupName; }
 
-    public final ErrorCode getErrorCode() { return errorCode; }
-
-    public final String getCode() { return errorCode == null ? null : errorCode.value(); }
+    public final ErrorCode getCode() { return errorCode; }
 
     public Object[] getDetails() { return details == null ? null : copyOf(details, details.length); }
 }

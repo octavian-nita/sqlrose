@@ -10,7 +10,7 @@ public interface ErrorReport {
 
     void report();
 
-    void addGenericError();
+    void addGenericReport();
 
     void add(Iterable<? extends Throwable> exceptions);
 

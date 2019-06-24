@@ -68,6 +68,10 @@ public interface I18n {
      */
     @NonNull String t(String key, Object... args);
 
+    default @NonNull String t(Object key, Object... args) {
+        return t(key == null ? null : key.toString(), args);
+    }
+
     /**
      * @return never {@code null} (at worst, an empty string)
      */

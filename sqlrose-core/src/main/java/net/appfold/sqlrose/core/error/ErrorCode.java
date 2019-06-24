@@ -3,8 +3,7 @@ package net.appfold.sqlrose.core.error;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 /**
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
@@ -20,10 +19,11 @@ public final class ErrorCode implements Comparable<ErrorCode>, Serializable {
 
     public static final ErrorCode E_NO_DETAILS = new ErrorCode("E_NO_DETAILS");
 
-    private static final Map<String, ErrorCode> valueCache = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, ErrorCode> valueCache = new ConcurrentHashMap<>();
 
-    public static ErrorCode errorCode(CharSequence value) {
-        return valueCache.computeIfAbsent(value == null ? null : value.toString(), ErrorCode::new);
+    @NonNull
+    public static ErrorCode errorCode(@NonNull CharSequence value) {
+        return valueCache.computeIfAbsent(value.toString(), ErrorCode::new);
     }
 
     private final String value;
@@ -51,6 +51,7 @@ public final class ErrorCode implements Comparable<ErrorCode>, Serializable {
         return getValue();
     }
 
+    @NonNull
     public String value() {
         return getValue();
     }
