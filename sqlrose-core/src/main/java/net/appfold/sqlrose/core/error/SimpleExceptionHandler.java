@@ -5,8 +5,6 @@ import net.appfold.sqlrose.i18n.*;
 import net.appfold.sqlrose.logging.Log;
 import org.slf4j.Logger;
 
-import java.util.function.Supplier;
-
 import static java.lang.Thread.currentThread;
 import static net.appfold.sqlrose.core.error.ErrorCode.E_NO_DETAILS;
 
@@ -18,11 +16,10 @@ public class SimpleExceptionHandler<SELF extends SimpleExceptionHandler<SELF>>
     implements ExceptionHandler<Throwable>, Thread.UncaughtExceptionHandler {
 
     @NonNull
-    protected Logger log;
+    protected final Logger log;
 
-    protected I18n i18n;
-
-    protected Supplier<ErrorReport> errorReportSupplier;
+    @NonNull
+    protected final I18n i18n;
 
     public SimpleExceptionHandler(Logger log, I18n i18n) {
         this.log = log == null ? Log.log() : log;
@@ -67,8 +64,6 @@ public class SimpleExceptionHandler<SELF extends SimpleExceptionHandler<SELF>>
                 return;
             }
 
-            final ErrorReport errorReport = errorReportSupplier == null ? null : errorReportSupplier.get();
-
             if (exception instanceof SqlRoseException) {
 
                 final SqlRoseException sqlRoseEx = (SqlRoseException) exception;
@@ -80,13 +75,6 @@ public class SimpleExceptionHandler<SELF extends SimpleExceptionHandler<SELF>>
 
             } else {
                 log.error("", exception);
-                if (errorReport != null) {
-                    errorReport.add(exception);
-                }
-            }
-
-            if (errorReport != null) {
-                errorReport.report();
             }
 
         } catch (Throwable throwable) { // overly cautious?

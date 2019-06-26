@@ -13,13 +13,13 @@ import java.util.concurrent.*;
 @EqualsAndHashCode
 public final class ErrorCode implements Comparable<ErrorCode>, Serializable {
 
-    public static final ErrorCode E_GENERIC = new ErrorCode("E_GENERIC");
-
-    public static final ErrorCode E_COMPOSITE = new ErrorCode("E_COMPOSITE");
-
-    public static final ErrorCode E_NO_DETAILS = new ErrorCode("E_NO_DETAILS");
-
     private static final ConcurrentMap<String, ErrorCode> valueCache = new ConcurrentHashMap<>();
+
+    public static final ErrorCode E_GENERIC = errorCode("E_GENERIC");
+
+    public static final ErrorCode E_COMPOSITE = errorCode("E_COMPOSITE");
+
+    public static final ErrorCode E_NO_DETAILS = errorCode("E_NO_DETAILS");
 
     @NonNull
     public static ErrorCode errorCode(@NonNull CharSequence value) {
