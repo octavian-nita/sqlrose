@@ -19,7 +19,7 @@ import java.util.Locale;
  * <em>translating</em> messages, {@link #l(Instant) l} for <em>localizing</em> values like dates and numbers,
  * etc.</li>
  * </ul>
- * {@code I18n} instances can, for example, be injected/set up to represent user profile or request-specific,
+ * {@code I18n} instances can, for example, be set up/injected to represent user profile or request-specific,
  * (i18n-related) configuration settings.
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
@@ -59,18 +59,18 @@ public interface I18n {
         return ZoneId.systemDefault();
     }
 
+    default @NonNull String t(Object key, Object... args) {
+        return t(key == null ? null : key.toString(), args);
+    }
+
     /**
      * If no message can be found/resolved for the given {@code key} and {@code #getLocale() currently used locale},
-     * and depending on the actual implementation, this method could return the key itself (if non-{@code null}), an
-     * empty string, etc.
+     * depending on the actual implementation, this method could return the key itself (if non-{@code null}), an empty
+     * string, etc.
      *
      * @return never {@code null}
      */
     @NonNull String t(String key, Object... args);
-
-    default @NonNull String t(Object key, Object... args) {
-        return t(key == null ? null : key.toString(), args);
-    }
 
     /**
      * @return never {@code null} (at worst, an empty string)

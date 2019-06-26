@@ -20,15 +20,14 @@ import static net.appfold.sqlrose.cache.MemoizedBiFn.memoize;
  * href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously recurring template pattern
  * </a></em>.
  * <p/>
- * Very similar in behaviour to <a href="https://spring.io/projects/spring-framework">Spring Framework's</a>
- * <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html">
- * ResourceBundleMessageSource</a></code>, this class relies on the underlying JDK's {@link ResourceBundle}
- * implementation in combination with the JDK's standard message parsing provided by {@link MessageFormat},
- * {@link net.appfold.sqlrose.cache.SoftCache (soft-)caches} by default the generated message formats for each message
- * and can be configured concerning how both the {@link #setResourceBundleSupplier(BiFunction) resource bundles} and
- * the {@link #setMessageFormatSupplier(BiFunction) message formats} are created. It also suffers from the same
- * shortcomings as {@code ResourceBundleMessageSource} so a {@code ReloadableResourceBundleMessageSource} might be a
- * better choice if the client application is based on Spring.
+ * Very similar in behaviour to <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html">
+ * Spring's ResourceBundleMessageSource</a></code>, this class relies on the underlying JDK's {@link ResourceBundle}
+ * implementation in combination with the JDK's standard message parsing provided by {@link MessageFormat}, {@link
+ * net.appfold.sqlrose.cache.SoftCache (soft-)caches} by default the generated message formats for each message and can
+ * be configured concerning how both the {@link #setResourceBundleSupplier(BiFunction) resource bundles} and the {@link
+ * #setMessageFormatSupplier(BiFunction) message formats} are created. It also suffers from the same shortcomings as
+ * {@code ResourceBundleMessageSource} so a {@code ReloadableResourceBundleMessageSource} might be a better choice if
+ * the client application is based on Spring.
  *
  * @author Octavian Theodor NITA (https://github.com/octavian-nita/)
  * @version 1.0, May 23, 2019
@@ -159,7 +158,7 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
             return "";
         }
 
-        final Locale locale = firstNonNull(this::getLocale, this::getDefaultLocale).orElse(null);
+        final Locale locale = firstNonNull(this::getLocale, this::getDefaultLocale).orElseGet(Locale::getDefault);
 
         final String message = message(key, locale);
         if (args == null || args.length == 0 || messageFormatSupplier == null) {
@@ -171,7 +170,7 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
     }
 
     @NonNull
-    protected String message(@NonNull String key, Locale locale) {
+    protected String message(@NonNull String key, @NonNull Locale locale) {
         if (resourceBundleSupplier == null) {
             return key;
         }
