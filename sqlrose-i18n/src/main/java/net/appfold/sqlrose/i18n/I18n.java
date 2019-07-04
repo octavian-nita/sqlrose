@@ -7,15 +7,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
- * Entry point to / façade of a basic internationalization subsystem which:
+ * Entry point to / façade of a basic internationalization subsystem that:
  * <ul>
- * <li><em>groups</em> parameters which play a part in consistently internationalizing the application, e.g., {@link
+ * <li>groups <em>parameters</em> which play a part in consistently internationalizing the application, e.g., {@link
  * #getLocale() locale}, {@link #getDateTimeFormatter() date/time formatter}, {@link #getZoneId() time-zone}, etc.</li>
- * <li><em>outlines</em> a set of essential primitives which can be used to internationalize the application,
- * regardless of the actual implementation mechanism or framework employed ({@link java.util.ResourceBundle}-based, <a
- * href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ReloadableResourceBundleMessageSource.html">
+ * <li>outlines a set of essential <em>primitives</em> which can be used to internationalize the application,
+ * regardless of the actual implementation mechanism or framework employed ({@link java.util.ResourceBundle
+ * ResourceBundle}-based, <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ReloadableResourceBundleMessageSource.html">
  * Spring</a>-based, etc.)</li>
- * <li>employs shorter names for commonly used routines, e.g., {@link #t(String, Object...) t} for
+ * <li>employs <em>shorter names</em> for commonly used routines, e.g., {@link #t(String, Object...) t} for
  * <em>translating</em> messages, {@link #l(Instant) l} for <em>localizing</em> values like dates and numbers,
  * etc.</li>
  * </ul>
@@ -36,8 +36,7 @@ public interface I18n {
     }
 
     /**
-     * @return the {@link Locale locale} used by {@code this} entry point if no other locale has been set; defaults to
-     *     {@code Locale.getDefault()}
+     * @return the {@link Locale locale} used by default by the application; defaults to {@code Locale.getDefault()}
      */
     default Locale getDefaultLocale() {
         return Locale.getDefault();
@@ -64,7 +63,7 @@ public interface I18n {
     }
 
     /**
-     * If no message can be found/resolved for the given {@code key} and {@code #getLocale() currently used locale},
+     * If no message can be found/resolved for the given {@code key} and {@link #getLocale() currently used locale},
      * depending on the actual implementation, this method could return the key itself (if non-{@code null}), an empty
      * string, etc.
      *

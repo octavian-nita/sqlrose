@@ -1,6 +1,6 @@
 package net.appfold.sqlrose.i18n;
 
-import lombok.NonNull;
+import lombok.*;
 
 import java.text.MessageFormat;
 import java.time.*;
@@ -10,15 +10,13 @@ import java.util.function.*;
 
 import static java.lang.System.getProperty;
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
-import static java.util.Collections.addAll;
 import static java.util.Optional.*;
 import static java.util.ResourceBundle.getBundle;
 import static net.appfold.sqlrose.cache.MemoizedBiFn.memoize;
+import static org.apache.commons.lang3.StringUtils.appendIfMissing;
 
 /**
- * A fairly <em>simple</em> implementation of {@link I18n} using the <em><a
- * href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously recurring template pattern
- * </a></em>.
+ * A fairly <em>simple</em> implementation of {@link I18n}.
  * <p/>
  * Very similar in behaviour to <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html">
  * Spring's ResourceBundleMessageSource</a></code>, this class relies on the underlying JDK's {@link ResourceBundle}
@@ -33,114 +31,35 @@ import static net.appfold.sqlrose.cache.MemoizedBiFn.memoize;
  * @version 1.0, May 23, 2019
  * @see <a href="https://blog.joda.org/2011/08/implementations-of-interfaces-prefixes.html">Implementations of
  *     interfaces - prefixes and suffixes</a>
- * @see <a href="https://stackoverflow.com/a/23895571/272939">Answer to <em>Fluent API with inheritance and
- *     generics</em></a>
- * @see <a href="https://stackoverflow.com/a/7355094/272939">Answer to <em>Is there a way to refer to the current type
- *     with a type variable?</em></a>
  */
-public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
-
-    /**
-     * @see <a href="https://stackoverflow.com/a/23895571/272939">Answer to <em>Fluent API with inheritance and
-     *     generics</em></a>
-     * @see <a href="https://stackoverflow.com/a/7355094/272939">Is there a way to refer to the current type with a type
-     */
-    @SuppressWarnings("unchecked")
-    protected final SELF self() {
-        return (SELF) this;
-    }
-
-    @NonNull
-    @SafeVarargs
-    protected final <T> Optional<T> firstNonNull(Supplier<T>... suppliers) {
-        if (suppliers != null) {
-            for (Supplier<T> supplier : suppliers) {
-                if (supplier != null) {
-                    final T t = supplier.get();
-                    if (t != null) {
-                        return of(t);
-                    }
-                }
-            }
-        }
-        return empty();
-    }
+@Builder(toBuilder = true)
+public class SimpleI18n implements I18n {
 
     public static final String L10N_BASEDIR_KEY = "l10n.basedir";
 
     public static final String L10N_BASEDIR_DEF = "l10n/";
 
+    @Singular
     protected final Set<String> bundleBaseNames = new LinkedHashSet<>(4);
 
-    protected String bundlePrefix;
+    @Builder.Default
+    protected final String bundlePrefix = appendIfMissing(getProperty(L10N_BASEDIR_KEY, L10N_BASEDIR_DEF).trim(), "/");
 
-    protected Locale locale;
+    @Builder.Default
+    protected final Locale locale = Locale.getDefault();
 
-    protected BiFunction<String, Locale, MessageFormat> messageFormatSupplier = memoize(MessageFormat::new);
+    @Builder.Default
+    protected final BiFunction<String, Locale, MessageFormat> messageFormatSupplier = memoize(MessageFormat::new);
 
-    protected BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier =
+    @Builder.Default
+    protected final BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier =
         (baseName, locale) -> locale == null ? getBundle(baseName) : getBundle(baseName, locale);
 
-    protected DateTimeFormatter dateTimeFormatter = RFC_1123_DATE_TIME;
+    @Builder.Default
+    protected final DateTimeFormatter dateTimeFormatter = RFC_1123_DATE_TIME;
 
-    protected ZoneId zoneId = ZoneId.systemDefault();
-
-    public SimpleI18n(String... bundleBaseNames) {
-        setBundlePrefix(getProperty(L10N_BASEDIR_KEY, L10N_BASEDIR_DEF).trim());
-        addBundleBaseNames(bundleBaseNames);
-    }
-
-    public SELF addBundleBaseNames(String... bundleBaseNames) {
-        if (bundleBaseNames != null && bundleBaseNames.length > 0) {
-            addAll(this.bundleBaseNames, bundleBaseNames);
-        }
-        return self();
-    }
-
-    public SELF setBundleBaseNames(Collection<String> bundleBaseNames) {
-        this.bundleBaseNames.clear();
-        if (bundleBaseNames != null && !bundleBaseNames.isEmpty()) {
-            this.bundleBaseNames.addAll(bundleBaseNames);
-        }
-        return self();
-    }
-
-    public SELF setBundlePrefix(String bundlePrefix) {
-        if (bundlePrefix != null) {
-            bundlePrefix = bundlePrefix.trim();
-            if (bundlePrefix.length() > 0 && !bundlePrefix.endsWith("/")) {
-                bundlePrefix += "/";
-            }
-        }
-
-        this.bundlePrefix = bundlePrefix;
-        return self();
-    }
-
-    public SELF setMessageFormatSupplier(BiFunction<String, Locale, MessageFormat> messageFormatSupplier) {
-        this.messageFormatSupplier = messageFormatSupplier;
-        return self();
-    }
-
-    public SELF setResourceBundleSupplier(BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier) {
-        this.resourceBundleSupplier = resourceBundleSupplier;
-        return self();
-    }
-
-    public SELF setLocale(Locale locale) {
-        this.locale = locale == null ? Locale.getDefault() : locale;
-        return self();
-    }
-
-    public SELF setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
-        this.dateTimeFormatter = dateTimeFormatter;
-        return self();
-    }
-
-    public SELF setZoneId(ZoneId zoneId) {
-        this.zoneId = zoneId;
-        return self();
-    }
+    @Builder.Default
+    protected final ZoneId zoneId = ZoneId.systemDefault();
 
     @Override
     public Locale getLocale() { return locale; }
@@ -210,5 +129,21 @@ public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
         final ZoneId zoneId = firstNonNull(this::getZoneId, this::getDefaultZoneId).orElseGet(ZoneId::systemDefault);
 
         return dtf.withLocale(locale).format(instant.atZone(zoneId));
+    }
+
+    @NonNull
+    @SafeVarargs
+    protected static <T> Optional<T> firstNonNull(Supplier<T>... suppliers) {
+        if (suppliers != null) {
+            for (Supplier<T> supplier : suppliers) {
+                if (supplier != null) {
+                    final T t = supplier.get();
+                    if (t != null) {
+                        return of(t);
+                    }
+                }
+            }
+        }
+        return empty();
     }
 }
