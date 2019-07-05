@@ -1,6 +1,6 @@
 package net.appfold.sqlrose.i18n;
 
-import lombok.*;
+import lombok.NonNull;
 
 import java.text.MessageFormat;
 import java.time.*;
@@ -10,13 +10,16 @@ import java.util.function.*;
 
 import static java.lang.System.getProperty;
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
+import static java.util.Collections.addAll;
 import static java.util.Optional.*;
 import static java.util.ResourceBundle.getBundle;
 import static net.appfold.sqlrose.cache.MemoizedBiFn.memoize;
 import static org.apache.commons.lang3.StringUtils.appendIfMissing;
 
 /**
- * A fairly <em>simple</em> implementation of {@link I18n}.
+ * A fairly <em>simple</em> implementation of {@link I18n} using the <em><a
+ * href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously recurring template pattern
+ * </a></em>.
  * <p/>
  * Very similar in behaviour to <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ResourceBundleMessageSource.html">
  * Spring's ResourceBundleMessageSource</a></code>, this class relies on the underlying JDK's {@link ResourceBundle}
@@ -31,35 +34,81 @@ import static org.apache.commons.lang3.StringUtils.appendIfMissing;
  * @version 1.0, May 23, 2019
  * @see <a href="https://blog.joda.org/2011/08/implementations-of-interfaces-prefixes.html">Implementations of
  *     interfaces - prefixes and suffixes</a>
+ * @see <a href="https://stackoverflow.com/a/23895571/272939">Answer to <em>Fluent API with inheritance and
+ *     generics</em></a>
+ * @see <a href="https://stackoverflow.com/a/7355094/272939">Answer to <em>Is there a way to refer to the current type
+ *     with a type variable?</em></a>
  */
-@Builder(toBuilder = true)
-public class SimpleI18n implements I18n {
+public class SimpleI18n<SELF extends SimpleI18n<SELF>> implements I18n {
 
     public static final String L10N_BASEDIR_KEY = "l10n.basedir";
 
     public static final String L10N_BASEDIR_DEF = "l10n/";
 
-    @Singular
     protected final Set<String> bundleBaseNames = new LinkedHashSet<>(4);
 
-    @Builder.Default
-    protected final String bundlePrefix = appendIfMissing(getProperty(L10N_BASEDIR_KEY, L10N_BASEDIR_DEF).trim(), "/");
+    protected String bundlePrefix;
 
-    @Builder.Default
-    protected final Locale locale = Locale.getDefault();
+    protected Locale locale;
 
-    @Builder.Default
-    protected final BiFunction<String, Locale, MessageFormat> messageFormatSupplier = memoize(MessageFormat::new);
+    protected BiFunction<String, Locale, MessageFormat> messageFormatSupplier = memoize(MessageFormat::new);
 
-    @Builder.Default
-    protected final BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier =
+    protected BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier =
         (baseName, locale) -> locale == null ? getBundle(baseName) : getBundle(baseName, locale);
 
-    @Builder.Default
-    protected final DateTimeFormatter dateTimeFormatter = RFC_1123_DATE_TIME;
+    protected DateTimeFormatter dateTimeFormatter = RFC_1123_DATE_TIME;
 
-    @Builder.Default
-    protected final ZoneId zoneId = ZoneId.systemDefault();
+    protected ZoneId zoneId = ZoneId.systemDefault();
+
+    public SimpleI18n(String... bundleBaseNames) {
+        setBundlePrefix(getProperty(L10N_BASEDIR_KEY, L10N_BASEDIR_DEF));
+        addBundleBaseNames(bundleBaseNames);
+    }
+
+    public SELF addBundleBaseNames(String... bundleBaseNames) {
+        if (bundleBaseNames != null && bundleBaseNames.length > 0) {
+            addAll(this.bundleBaseNames, bundleBaseNames);
+        }
+        return self();
+    }
+
+    public SELF setBundleBaseNames(Collection<String> bundleBaseNames) {
+        this.bundleBaseNames.clear();
+        if (bundleBaseNames != null && !bundleBaseNames.isEmpty()) {
+            this.bundleBaseNames.addAll(bundleBaseNames);
+        }
+        return self();
+    }
+
+    public SELF setBundlePrefix(String bundlePrefix) {
+        this.bundlePrefix = appendIfMissing(bundlePrefix == null ? null : bundlePrefix.trim(), "/");
+        return self();
+    }
+
+    public SELF setMessageFormatSupplier(BiFunction<String, Locale, MessageFormat> messageFormatSupplier) {
+        this.messageFormatSupplier = messageFormatSupplier;
+        return self();
+    }
+
+    public SELF setResourceBundleSupplier(BiFunction<String, Locale, ResourceBundle> resourceBundleSupplier) {
+        this.resourceBundleSupplier = resourceBundleSupplier;
+        return self();
+    }
+
+    public SELF setLocale(Locale locale) {
+        this.locale = locale == null ? Locale.getDefault() : locale;
+        return self();
+    }
+
+    public SELF setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
+        this.dateTimeFormatter = dateTimeFormatter;
+        return self();
+    }
+
+    public SELF setZoneId(ZoneId zoneId) {
+        this.zoneId = zoneId;
+        return self();
+    }
 
     @Override
     public Locale getLocale() { return locale; }
@@ -145,5 +194,15 @@ public class SimpleI18n implements I18n {
             }
         }
         return empty();
+    }
+
+    /**
+     * @see <a href="https://stackoverflow.com/a/23895571/272939">Answer to <em>Fluent API with inheritance and
+     *     generics</em></a>
+     * @see <a href="https://stackoverflow.com/a/7355094/272939">Is there a way to refer to the current type with a type
+     */
+    @SuppressWarnings("unchecked")
+    protected final SELF self() {
+        return (SELF) this;
     }
 }
